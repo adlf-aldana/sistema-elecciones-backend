@@ -6,7 +6,6 @@ const crypto = require("crypto-js");
 
 mesaCtrl.getMesas = async (req, res) => {
   const mesas = await mesaModel.find();
-  // const numMesa = await mesaModel.distinct("mesa");
   const numMesa = await mesaModel.aggregate([
     {
       $group: {
@@ -15,15 +14,15 @@ mesaCtrl.getMesas = async (req, res) => {
         habilitado: { $push: "$habilitado" },
       },
     },
+    {
+      $sort: { _id: 1 },
+    },
   ]);
   res.json({ mesas, numMesa });
 };
 
 mesaCtrl.createMesa = async (req, res) => {
   try {
-    // const cu = req.body[0].cuEncargado;
-    // const mesas = await mesaModel.find();
-
     const universitarios = await universitarioModel.find();
 
     let universitario = [];
@@ -42,7 +41,6 @@ mesaCtrl.createMesa = async (req, res) => {
     // VERIFICANDO QUE LOS CU DE LOS UNIVERSITARIOS EXISTAN, DENTRO DE LOS UNIVERSITARIOS EXISTENTES
     universitario.map(async (u) => {
       if (u.length < 1) {
-        console.log("no existe");
         return res.status(400).json({ msg: "Error: Universitario no existe " });
       }
     });
@@ -75,16 +73,34 @@ mesaCtrl.getMesa = async (req, res) => {
 };
 
 mesaCtrl.updateMesa = async (req, res) => {
-  console.log(req.params);
-  console.log(!req.body[0]);
+  const mesas = await mesaModel.findByIdAndUpdate(req.params.id, {
+    habilitado: !req.body[0],
+  });
 
-  await mesaModel.findByIdAndUpdate(req.params.id, {habilitado: !req.body[0]});
-  
+  const numMesa = await mesaModel.aggregate([
+    {
+      $group: {
+        _id: "$mesa",
+        id: { $push: "$_id" },
+        habilitado: { $push: "$habilitado" },
+      },
+    },
+    {
+      $sort: { _id: 1 },
+    },
+  ]);
+  res.json({ mesas, numMesa });
 };
 
 mesaCtrl.deleteMesa = async (req, res) => {
-  await mesaCtrl.findByIdAndDelete(req.params.id);
-  res.json({ msg: "Frente Eliminado" });
+  try {
+    
+    console.log(req.params.id);
+    await mesaModel.findByIdAndDelete(req.params.id);
+    res.json({ msg: "Mesa Eliminada" });
+  } catch (error) {
+    console.log(error);
+  }
 };
 
 module.exports = mesaCtrl;
