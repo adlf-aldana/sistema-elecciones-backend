@@ -2,7 +2,8 @@
 require("dotenv").config();
 
 const app = require("./app");
-const port = process.env.PORT || 5000;
+// const port = process.env.PORT || 5000;
+const port = process.env.PORT || 4000;
 // Llamando a database, creación y coneccion a la base de datos mongoDB
 require("./database");
 

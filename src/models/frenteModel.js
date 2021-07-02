@@ -7,11 +7,15 @@ const frenteSchema = new Schema(
       require: true,
       trim: true,
     },
+    cargo: {
+      type: String,
+      require: true,
+      trim: true,
+    },
     cuEncargado: {
       type: String,
       require: true,
       trim: true,
-      unique: true,
     },
     celularEncargado: {
       type: String,
