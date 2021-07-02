@@ -21,5 +21,6 @@ app.use(
 app.use("/api/auth", require("./routes/auth"));
 app.use("/api/votante", require("./routes/votante"));
 app.use("/api/consultaVotante", require("./routes/consultasVotante"));
+app.use("/api/mesas", require("./routes/mesas"));
 
 module.exports = app;

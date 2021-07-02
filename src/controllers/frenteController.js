@@ -14,13 +14,9 @@ frenteCtrl.getFrentes = async (req, res) => {
       $group: {
         _id: "$nombreFrente",
         logoFrente: { $push: "$logoFrente" },
-      }, // Second Stage
+      },
     },
-    // {
-      //   $match: { "nombreFrente": { nombreFrente } }
-      // }
     ]);
-    console.log(frente)
   res.json({ nombre, frente });
 };
 
@@ -106,7 +102,6 @@ frenteCtrl.createFrente = async (req, res) => {
 };
 
 frenteCtrl.getFrente = async (req, res) => {
-  console.log('aca');
   const frente = await frenteModel.findById(req.params.id);
   res.json({ msg: frente });
 };
