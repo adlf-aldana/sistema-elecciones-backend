@@ -106,11 +106,18 @@ univerCtrl.getUniversitario = async (req, res) => {
   const universitarios = await universitarioModel.find();
   let universitario = universitarios.filter(
     (res) =>
-    crypto.AES.decrypt(res.cu, "palabraClave").toString(crypto.enc.Utf8) ===
-    req.params.id
-    );
+      crypto.AES.decrypt(res.cu, "palabraClave").toString(crypto.enc.Utf8) ===
+      req.params.id
+  );
+  let registroUniversitario = universitarios.filter(
+    (res) => res.registro === req.params.id
+  );
+
+  if (registroUniversitario.length > 1) {
+    return   res.json({ registroUniversitario });
+  }
   if (universitario.length < 1) {
-    return res.status(400).json({ msg: "Error: El universitario no existe" });
+    return   res.json({ estudiante: universitario, registroUniversitario });
   }
   universitario = {
     id: universitario[0].id,
@@ -128,6 +135,7 @@ univerCtrl.getUniversitario = async (req, res) => {
     ci: crypto.AES.decrypt(universitario[0].ci, "palabraClave").toString(
       crypto.enc.Utf8
     ),
+    registro: universitario[0].registro,
     carrera: crypto.AES.decrypt(
       universitario[0].carrera,
       "palabraClave"

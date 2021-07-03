@@ -17,13 +17,13 @@ const universitarioSchema = new Schema(
       type: String,
       require: true,
       trim: true,
-      unique: true
+      unique: true,
     },
     ci: {
       type: String,
       require: true,
       trim: true,
-      unique: true
+      unique: true,
     },
     carrera: {
       type: String,
@@ -35,9 +35,13 @@ const universitarioSchema = new Schema(
       require: true,
       trim: true,
     },
+    registro: {
+      type: String,
+      require: true,
+    },
     password: {
-      type: String
-    }
+      type: String,
+    },
   },
   {
     // fecha y hora de creación o edicion de universitario
