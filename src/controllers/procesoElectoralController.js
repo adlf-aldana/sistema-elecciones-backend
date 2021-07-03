@@ -9,7 +9,13 @@ procesoCtrl.getProcesosElectorales = async (req, res) => {
       .limit(1);
 
     const procesosElectorales = await procesoElectoralModel.aggregate([
-      { $group: { _id: "$registro", id: { $push: "$_id" } } },
+      {
+        $group: {
+          _id: "$registro",
+          id: { $push: "$_id" },
+          estado: { $push: "$estado" },
+        },
+      },
     ]);
     res.json({ procesosElectorales, ultimoProcesoElectoral });
   } catch (error) {
