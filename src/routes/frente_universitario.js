@@ -4,8 +4,6 @@ const router = Router();
 const path = require("path");
 const { v4: uuidv4 } = require("uuid");
 
-const { check } = require('express-validator')
-
 const {
   getFrentes,
   createFrente,

@@ -16,17 +16,15 @@ frenteCtrl.getFrentes = async (req, res) => {
         logoFrente: { $push: "$logoFrente" },
       },
     },
-    ]);
+  ]);
   res.json({ nombre, frente });
 };
 
 frenteCtrl.createFrente = async (req, res) => {
   try {
-    //   // let cu = parseInt(cuEncargado);
     const universitarios = await universitarioModel.find();
 
     let universitario = [];
-    console.log(req.body.cuEncargado.length);
     req.body.cuEncargado.map((cu) => {
       universitario.push(
         universitarios.filter(
@@ -62,10 +60,9 @@ frenteCtrl.createFrente = async (req, res) => {
     for (let i = 0; i < req.body.cargo.length; i++) {
       const newFrente = new frenteModel({
         nombreFrente: req.body.nombreFrente,
+        registro: req.body.registro[0],
         logoFrente: "/images/" + req.file.filename,
         cargo: req.body.cargo[i],
-        // cuEncargado: req.body.cuEncargado[i],
-        // celularEncargado: req.body.celularEncargado[i],
 
         // cuEncargado: req.body.cuEncargado[i],
         // celularEncargado: req.body.celularEncargado[i],
@@ -102,8 +99,26 @@ frenteCtrl.createFrente = async (req, res) => {
 };
 
 frenteCtrl.getFrente = async (req, res) => {
-  const frente = await frenteModel.findById(req.params.id);
-  res.json({ msg: frente });
+  const frentes = await frenteModel.find();
+
+  // FILTRANDO FRENTES QUE TENGAN LA MISMA FECHA DEL PROCESO ELECTORAL
+  let registroFrentes = frentes.filter((res) => res.registro === req.params.id);
+
+  const nombreCadaFrentePorRegistro = await frenteModel.aggregate([
+    { $match: { registro: req.params.id } },
+    {
+      $group: {
+        _id: "$nombreFrente",
+        cargo: { $push: "$cargo" },
+        celularEncargado: { $push: "$celularEncargado" },
+        cuEncargado: { $push: "$cuEncargado" },
+        logoFrente: { $push: "$logoFrente" },
+      },
+    },
+  ]);
+  // const nombreCadaFrentePorRegistro = await frenteModel.distinct('nombreFrente', {registro: req.params.id})
+
+  res.json({ registroFrentes, nombreCadaFrentePorRegistro });
 };
 
 frenteCtrl.updateFrente = async (req, res) => {
