@@ -26,6 +26,9 @@ const mesaSchema = new Schema(
       type: Boolean,
       trim: true,
     },
+    registro: {
+      type: String,
+    },
   },
   {
     timestamps: true,

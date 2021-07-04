@@ -48,6 +48,7 @@ mesaCtrl.createMesa = async (req, res) => {
     for (let i = 0; i < req.body.length; i++) {
       const newMesa = new mesaModel({
         mesa: req.body[0].mesa,
+        registro: req.body[0].registro,
         cargo: req.body[i].cargo,
         cuEncargado: crypto.AES.encrypt(
           req.body[i].cuEncargado,
@@ -68,8 +69,27 @@ mesaCtrl.createMesa = async (req, res) => {
 };
 
 mesaCtrl.getMesa = async (req, res) => {
-  const mesa = await mesaModel.findById(req.params.id);
-  res.json({ msg: mesa });
+  const mesas = await mesaModel.find();
+
+  // FILTRANDO FRENTES QUE TENGAN LA MISMA FECHA DEL PROCESO ELECTORAL
+  let registroMesas = mesas.filter((res) => res.registro === req.params.id);
+
+  const nombreCadaMesaPorRegistro = await mesaModel.aggregate([
+    { $match: { registro: req.params.id } },
+    {
+      $group: {
+        _id: "$mesa",
+        cargo: { $push: "$cargo" },
+        cuEncargado: { $push: "$cuEncargado" },
+        celularEncargado: { $push: "$celularEncargado" },
+        habilitado: { $push: "$habilitado" },
+        id: { $push: "$_id" },
+      },
+    },
+  ]);
+  // const nombreCadaFrentePorRegistro = await frenteModel.distinct('nombreFrente', {registro: req.params.id})
+
+  res.json({ registroMesas, nombreCadaMesaPorRegistro });
 };
 
 mesaCtrl.updateMesa = async (req, res) => {
@@ -94,7 +114,6 @@ mesaCtrl.updateMesa = async (req, res) => {
 
 mesaCtrl.deleteMesa = async (req, res) => {
   try {
-    
     console.log(req.params.id);
     await mesaModel.findByIdAndDelete(req.params.id);
     res.json({ msg: "Mesa Eliminada" });
