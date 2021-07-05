@@ -13,12 +13,28 @@ mesaCtrl.getMesas = async (req, res) => {
         _id: "$mesa",
         id: { $push: "$_id" },
         habilitado: { $push: "$habilitado" },
+        cargo: { $push: "$cargo" },
+        cuEncargado: { $push: "$cuEncargado" },
+        celularEncargado: { $push: "$celularEncargado" },
       },
     },
     {
       $sort: { _id: 1 },
     },
   ]);
+
+  // const numMesa = await mesaModel.aggregate([
+  //   {
+  //     $group: {
+  //       _id: "$mesa",
+  //       id: { $push: "$_id" },
+  //       habilitado: { $push: "$habilitado" },
+  //     },
+  //   },
+  //   {
+  //     $sort: { _id: 1 },
+  //   },
+  // ]);
   res.json({ mesas, numMesa });
 };
 
@@ -46,6 +62,25 @@ mesaCtrl.createMesa = async (req, res) => {
       }
     });
 
+    const comprobandoCuEncargado = universitarios.filter(
+      (res) =>
+        crypto.AES.decrypt(res.cu, "palabraClave").toString(crypto.enc.Utf8) ===
+        req.body[0].cuEncargadoMesa
+    );
+
+    const comprobandoCuVerificador = universitarios.filter(
+      (res) =>
+        crypto.AES.decrypt(res.cu, "palabraClave").toString(crypto.enc.Utf8) ===
+        req.body[0].cuVerificador
+    );
+
+    if (comprobandoCuEncargado.length < 1) {
+      return res.status(400).json({ msg: "Error: Universitario no existe " });
+    }
+
+    if (comprobandoCuVerificador.length < 1) {
+      return res.status(400).json({ msg: "Error: Universitario no existe " });
+    }
     // HASHEANDO PASSWORD ENCARGADO DE MESA
     const salt = await bcryptjs.genSalt(10);
     req.body[0].passwordEncargadoMesa = await bcryptjs.hash(
@@ -108,6 +143,11 @@ mesaCtrl.getMesa = async (req, res) => {
 
   // FILTRANDO FRENTES QUE TENGAN LA MISMA FECHA DEL PROCESO ELECTORAL
   let registroMesas = mesas.filter((res) => res.registro === req.params.id);
+  let mesaAbierta = mesas.filter(
+    (res) =>
+      res.cuEncargadoMesa === req.params.id ||
+      res.cuVerificador === req.params.id
+  );
 
   const nombreCadaMesaPorRegistro = await mesaModel.aggregate([
     { $match: { registro: req.params.id } },
@@ -121,12 +161,16 @@ mesaCtrl.getMesa = async (req, res) => {
         id: { $push: "$_id" },
       },
     },
+    {
+      $sort: { _id: 1 },
+    },
   ]);
   // const nombreCadaFrentePorRegistro = await frenteModel.distinct('nombreFrente', {registro: req.params.id})
 
   res.json({
     registroMesas,
     nombreCadaMesaPorRegistro,
+    mesaAbierta,
   });
 
   // res.json({
@@ -142,18 +186,35 @@ mesaCtrl.updateMesa = async (req, res) => {
     habilitado: !req.body[0],
   });
 
+  // const nombreCadaMesaPorRegistro = await mesaModel.aggregate([
+  //   { $match: { registro: req.params.id } },
+  //   {
+  //     $group: {
+  //       _id: "$mesa",
+  //       cargo: { $push: "$cargo" },
+  //       cuEncargado: { $push: "$cuEncargado" },
+  //       celularEncargado: { $push: "$celularEncargado" },
+  //       habilitado: { $push: "$habilitado" },
+  //       id: { $push: "$_id" },
+  //     },
+  //   },
+  // ]);
   const numMesa = await mesaModel.aggregate([
     {
       $group: {
         _id: "$mesa",
         id: { $push: "$_id" },
         habilitado: { $push: "$habilitado" },
+        cargo: { $push: "$cargo" },
+        cuEncargado: { $push: "$cuEncargado" },
+        celularEncargado: { $push: "$celularEncargado" },
       },
     },
     {
       $sort: { _id: 1 },
     },
   ]);
+
   res.json({ mesas, numMesa });
 };
 

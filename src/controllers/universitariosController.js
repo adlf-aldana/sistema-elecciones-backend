@@ -151,8 +151,6 @@ univerCtrl.getUniversitario = async (req, res) => {
       crypto.enc.Utf8
     ),
   };
-  console.log(universitario);
-
   res.json({ estudiante: universitario });
 };
 
@@ -166,10 +164,11 @@ univerCtrl.updateUniversitario = async (req, res) => {
         crypto.AES.decrypt(res.cu, "palabraClave").toString(crypto.enc.Utf8) ===
         req.params.id
     );
+
     if (encargadoMesaVerificador) {
-      encargadoMesaVerificador.map(async (res) => {
-        await universitarioModel.findByIdAndUpdate(res._id, req.body);
-      });
+      // encargadoMesaVerificador.map(async (res) => {
+        return await universitarioModel.findByIdAndUpdate(encargadoMesaVerificador._id, req.body);
+      // });
     }
 
     const universitario = await universitarioModel.findByIdAndUpdate(

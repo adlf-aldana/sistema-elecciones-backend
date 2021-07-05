@@ -51,8 +51,8 @@ authCtrl.autenticarUsuario = async (req, res) => {
     );
     const existeVerificador = mesas.filter((mesa) => mesa.cuVerificador === cu);
 
-    if (existeCuEncargadoMesa.length > 1) {
-      console.log("encargado");
+    if (existeCuEncargadoMesa.length > 0) {
+      console.log("e");
       const passCorrecto = await bcryptjs.compare(
         password,
         existeCuEncargadoMesa[0].passwordEncargadoMesa
@@ -60,8 +60,8 @@ authCtrl.autenticarUsuario = async (req, res) => {
       if (!passCorrecto) {
         return res.status(400).json({ msg: "Password Incorrecto" });
       }
-    } else if (existeVerificador.length > 1) {
-      console.log("verificador");
+    } else if (existeVerificador.length > 0) {
+      console.log("v");
       const passCorrecto = await bcryptjs.compare(
         password,
         existeVerificador[0].passwordVerificador
@@ -70,6 +70,7 @@ authCtrl.autenticarUsuario = async (req, res) => {
         return res.status(400).json({ msg: "Password Incorrecto" });
       }
     } else {
+      console.log('aca');
       const passCorrecto = await bcryptjs.compare(
         password,
         universitario.password

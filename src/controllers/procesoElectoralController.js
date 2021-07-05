@@ -65,15 +65,20 @@ procesoCtrl.getProcesoElectoral = async (req, res) => {
 };
 
 procesoCtrl.updateProcesoElectoral = async (req, res) => {
-  const procesosAbiertos = await procesoElectoralModel.aggregate([
-    { $group: { _id: "$estado", id: { $push: "$_id" } } },
-  ]);
+  try {
+    const procesosAbiertos = await procesoElectoralModel.aggregate([
+      { $group: { _id: "$estado", id: { $push: "$_id" } } },
+    ]);
 
-  procesosAbiertos[0].id.map(async (id) => {
-    await procesoElectoralModel.findByIdAndUpdate(id, { estado: false });
-  });
+    // cerrando proceso de todos los que estan en ese proceso
+    procesosAbiertos[0].id.map(async (id) => {
+      await procesoElectoralModel.findByIdAndUpdate(id, { estado: false });
+    });
 
-  res.send({ msg: "Editado" });
+    res.send({ msg: "Editado" });
+  } catch (e) {
+    console.log(e);
+  }
 };
 
 procesoCtrl.deleteProcesoElectoral = async (req, res) => {
