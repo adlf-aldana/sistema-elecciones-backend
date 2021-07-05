@@ -55,7 +55,7 @@ mesaCtrl.createMesa = async (req, res) => {
       );
     });
 
-    // VERIFICANDO QUE LOS CU DE LOS UNIVERSITARIOS EXISTAN, DENTRO DE LOS UNIVERSITARIOS EXISTENTES
+    // // VERIFICANDO QUE LOS CU DE LOS UNIVERSITARIOS EXISTAN, DENTRO DE LOS UNIVERSITARIOS EXISTENTES
     universitario.map(async (u) => {
       if (u.length < 1) {
         return res.status(400).json({ msg: "Error: Universitario no existe " });
@@ -159,6 +159,10 @@ mesaCtrl.getMesa = async (req, res) => {
         celularEncargado: { $push: "$celularEncargado" },
         habilitado: { $push: "$habilitado" },
         id: { $push: "$_id" },
+        cuEncargadoMesa: { $push: "$cuEncargadoMesa" },
+        cargoEncargadoMesa: { $push: "$cargoEncargadoMesa" },
+        cuVerificador: { $push: "$cuVerificador" },
+        cargoVerificador: { $push: "$cargoVerificador" },
       },
     },
     {

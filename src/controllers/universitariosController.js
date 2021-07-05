@@ -110,6 +110,7 @@ univerCtrl.createUniversitario = async (req, res) => {
 
 // OBTIENE A UN UNIVERSITARIO POR ID
 univerCtrl.getUniversitario = async (req, res) => {
+  // console.log(req.params.id);
   const universitarios = await universitarioModel.find();
   let universitario = universitarios.filter(
     (res) =>
@@ -165,16 +166,22 @@ univerCtrl.updateUniversitario = async (req, res) => {
         req.params.id
     );
 
-    if (encargadoMesaVerificador) {
-      // encargadoMesaVerificador.map(async (res) => {
-        return await universitarioModel.findByIdAndUpdate(encargadoMesaVerificador._id, req.body);
-      // });
+    // console.log(encargadoMesaVerificador[0].nombre);
+    // console.log(crypto.AES.decrypt(encargadoMesaVerificador[0].nombre, "palabraClave").toString(crypto.enc.Utf8));
+    // console.log(crypto.AES.decrypt(encargadoMesaVerificador[1].nombre, "palabraClave").toString(crypto.enc.Utf8));
+    if (encargadoMesaVerificador.length > 0) {
+      console.log("encargado");
+      universitario = encargadoMesaVerificador.map(async (res) => {
+        await universitarioModel.findByIdAndUpdate(res._id, req.body);
+      });
+    } else {
+      console.log("no");
+      universitario = await universitarioModel.findByIdAndUpdate(
+        req.params.id,
+        req.body
+      );
     }
 
-    const universitario = await universitarioModel.findByIdAndUpdate(
-      req.params.id,
-      req.body
-    );
     res.json({ universitario });
   } catch (e) {
     console.log(e);

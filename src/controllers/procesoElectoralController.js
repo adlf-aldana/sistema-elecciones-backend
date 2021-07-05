@@ -60,8 +60,8 @@ procesoCtrl.createProcesoElectoral = async (req, res) => {
 };
 
 procesoCtrl.getProcesoElectoral = async (req, res) => {
-  //   const mesa = await mesaModel.findById(req.params.id);
-  //   res.json({ msg: mesa });
+    const mesa = await mesaModel.findById(req.params.id);
+    res.json({ msg: mesa });
 };
 
 procesoCtrl.updateProcesoElectoral = async (req, res) => {

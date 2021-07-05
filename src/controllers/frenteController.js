@@ -26,6 +26,7 @@ frenteCtrl.createFrente = async (req, res) => {
     const universitarios = await universitarioModel.find();
 
     let universitario = [];
+    console.log(req.body);
     req.body.cuEncargado.map((cu) => {
       universitario.push(
         universitarios.filter(
@@ -116,6 +117,9 @@ frenteCtrl.getFrente = async (req, res) => {
         logoFrente: { $push: "$logoFrente" },
         id: { $push: "$_id" },
       },
+    },
+    {
+      $sort: { _id: 1 },
     },
   ]);
   // const nombreCadaFrentePorRegistro = await frenteModel.distinct('nombreFrente', {registro: req.params.id})
