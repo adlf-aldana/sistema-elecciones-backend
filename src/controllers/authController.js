@@ -1,5 +1,6 @@
 const authCtrl = {};
 const Universitarios = require("../models/universitarioModels");
+const MesasModels = require("../models/mesaModel");
 const jwt = require("jsonwebtoken");
 const bcryptjs = require("bcryptjs");
 const crypto = require("crypto-js");
@@ -42,13 +43,24 @@ authCtrl.autenticarUsuario = async (req, res) => {
       password: universitario[0].password,
     };
 
-    const passCorrecto = await bcryptjs.compare(
-      password,
-      universitario.password
+    // BUSCANDO POR MESA
+    const mesas = await MesasModels.find();
+    const existeCuMesa = mesas.filter(
+      (mesa) =>
+        crypto.AES.decrypt(mesa.cuEncargado, "palabraClave").toString(
+          crypto.enc.Utf8
+        ) === cu
     );
-    if (!passCorrecto) {
-      return res.status(400).json({ msg: "Password Incorrecto" });
+    if (!existeCuMesa) {
+      const passCorrecto = await bcryptjs.compare(
+        password,
+        universitario.password
+      );
+      if (!passCorrecto) {
+        return res.status(400).json({ msg: "Password Incorrecto" });
+      }
     }
+    
     const payload = {
       usuario: {
         id: universitario.id,
@@ -57,9 +69,9 @@ authCtrl.autenticarUsuario = async (req, res) => {
     jwt.sign(
       payload,
       process.env.SECRETA,
-      {
-        expiresIn: 3600,
-      },
+      // {
+      //   expiresIn: 3600,
+      // },
       (error, token) => {
         if (error) throw error;
         res.json({ token });

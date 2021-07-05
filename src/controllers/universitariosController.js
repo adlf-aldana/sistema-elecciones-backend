@@ -50,30 +50,36 @@ univerCtrl.createUniversitario = async (req, res) => {
         crypto.AES.decrypt(res.cu, "palabraClave").toString(crypto.enc.Utf8) ===
         DecryptCu
     );
-    if (universitario.length > 0) {
+    if (
+      universitario.length > 0 &&
+      universitario.registro === req.body.registro
+    ) {
       return res.status(400).json({ msg: "Error: El universitario ya existe" });
     }
+
     //   // hashear el password
-    const salt = await bcryptjs.genSalt(10);
-    req.body.password = await bcryptjs.hash(password, salt);
-    // Crea universitario
-    universitario = new universitarioModel(req.body);
-    // if (password) {
-    //   // hashear el password
-    //   const salt = await bcryptjs.genSalt(10);
-    //   req.body.password = await bcryptjs.hash(password, salt);
-    //   // Crea universitario
-    //   universitario = new universitarioModel(req.body);
-    // } else {
-    //   // Crea universitario
-    //   universitario = new universitarioModel({
-    //     nombre,
-    //     apellidos,
-    //     cu,
-    //     carrera,
-    //     cargo,
-    //   });
-    // }
+    // const salt = await bcryptjs.genSalt(10);
+    // req.body.password = await bcryptjs.hash(password, salt);
+    // // Crea universitario
+    // universitario = new universitarioModel(req.body);
+    if (password) {
+      // hashear el password
+      const salt = await bcryptjs.genSalt(10);
+      req.body.password = await bcryptjs.hash(password, salt);
+      // Crea universitario
+      universitario = new universitarioModel(req.body);
+    } else {
+      // Crea universitario
+      universitario = new universitarioModel({
+        nombre: req.body.nombre,
+        apellidos: req.body.apellidos,
+        cu: req.body.cu,
+        ci: req.body.ci,
+        carrera: req.body.carrera,
+        cargo: req.body.cargo,
+        registro: req.body.registro,
+      });
+    }
     // Guarda a Universitario
     await universitario.save();
     // // crear y firmar JWT
@@ -86,9 +92,9 @@ univerCtrl.createUniversitario = async (req, res) => {
     jwt.sign(
       payload,
       process.env.SECRETA,
-      {
-        expiresIn: 3600,
-      },
+      // {
+      //   expiresIn: 3600,
+      // },
       (error, token) => {
         if (error) throw error;
         res.json({ token: token });
@@ -97,7 +103,8 @@ univerCtrl.createUniversitario = async (req, res) => {
     // Mensaje de confirmación
     res.json({ msg: "Universitario creado correctamente" });
   } catch (e) {
-    res.status(400).json({ msg: "Hubo un error" });
+    console.log(e);
+    res.status(400).json({ msg: "Error: No se guardaron los datos" });
   }
 };
 
@@ -114,10 +121,10 @@ univerCtrl.getUniversitario = async (req, res) => {
   );
 
   if (registroUniversitario.length > 1) {
-    return   res.json({ registroUniversitario });
+    return res.json({ registroUniversitario });
   }
   if (universitario.length < 1) {
-    return   res.json({ estudiante: universitario, registroUniversitario });
+    return res.json({ estudiante: universitario, registroUniversitario });
   }
   universitario = {
     id: universitario[0].id,

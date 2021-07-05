@@ -3,6 +3,7 @@ const mesaModel = require("../models/mesaModel");
 const universitarioModel = require("../models/universitarioModels");
 
 const crypto = require("crypto-js");
+const bcryptjs = require("bcryptjs");
 
 mesaCtrl.getMesas = async (req, res) => {
   const mesas = await mesaModel.find();
@@ -44,6 +45,20 @@ mesaCtrl.createMesa = async (req, res) => {
         return res.status(400).json({ msg: "Error: Universitario no existe " });
       }
     });
+    
+    // HASHEANDO PASSWORD ENCARGADO DE MESA
+    const salt = await bcryptjs.genSalt(10);
+    req.body[0].passwordEncargadoMesa = await bcryptjs.hash(
+      req.body[0].passwordEncargadoMesa,
+      salt
+    );
+
+    // HASHEANDO PASSWORD VERIFICADOR
+    const salt2 = await bcryptjs.genSalt(10);
+    req.body[0].passwordVerificador = await bcryptjs.hash(
+      req.body[0].passwordVerificador,
+      salt2
+    );
 
     for (let i = 0; i < req.body.length; i++) {
       const newMesa = new mesaModel({
@@ -59,12 +74,22 @@ mesaCtrl.createMesa = async (req, res) => {
           "palabraClave"
         ).toString(),
         habilitado: req.body[i].habilitado,
+
+        cargoEncargadoMesa: req.body[0].cargoEncargadoMesa,
+        cuEncargadoMesa: req.body[0].cuEncargadoMesa,
+        celularEncargadoMesa: req.body[0].celularEncargadoMesa,
+        passwordEncargadoMesa: req.body[0].passwordEncargadoMesa,
+        cargoVerificador: req.body[0].cargoVerificador,
+        cuVerificador: req.body[0].cuVerificador,
+        celularVerificador: req.body[0].celularVerificador,
+        passwordVerificador: req.body[0].passwordVerificador,
       });
       await newMesa.save();
     }
     res.send({ msg: "Guardado" });
   } catch (error) {
     console.log(error);
+    res.send({ msg: error });
   }
 };
 
@@ -114,7 +139,6 @@ mesaCtrl.updateMesa = async (req, res) => {
 
 mesaCtrl.deleteMesa = async (req, res) => {
   try {
-    console.log(req.params.id);
     await mesaModel.findByIdAndDelete(req.params.id);
     res.json({ msg: "Mesa Eliminada" });
   } catch (error) {

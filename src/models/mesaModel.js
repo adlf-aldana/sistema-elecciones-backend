@@ -29,6 +29,30 @@ const mesaSchema = new Schema(
     registro: {
       type: String,
     },
+    cargoEncargadoMesa: {
+      type: String,
+    },
+    cuEncargadoMesa: {
+      type: String,
+    },
+    celularEncargadoMesa: {
+      type: String,
+    },
+    passwordEncargadoMesa: {
+      type: String,
+    },
+    cargoVerificador: {
+      type: String,
+    },
+    cuVerificador: {
+      type: String,
+    },
+    celularVerificador: {
+      type: String,
+    },
+    passwordVerificador: {
+      type: String,
+    },
   },
   {
     timestamps: true,
