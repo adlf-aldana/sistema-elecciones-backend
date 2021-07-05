@@ -13,6 +13,7 @@ frenteCtrl.getFrentes = async (req, res) => {
     {
       $group: {
         _id: "$nombreFrente",
+        id: { $push: "$_id" },
         logoFrente: { $push: "$logoFrente" },
       },
     },
@@ -113,6 +114,7 @@ frenteCtrl.getFrente = async (req, res) => {
         celularEncargado: { $push: "$celularEncargado" },
         cuEncargado: { $push: "$cuEncargado" },
         logoFrente: { $push: "$logoFrente" },
+        id: { $push: "$_id" },
       },
     },
   ]);

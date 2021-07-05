@@ -45,7 +45,7 @@ mesaCtrl.createMesa = async (req, res) => {
         return res.status(400).json({ msg: "Error: Universitario no existe " });
       }
     });
-    
+
     // HASHEANDO PASSWORD ENCARGADO DE MESA
     const salt = await bcryptjs.genSalt(10);
     req.body[0].passwordEncargadoMesa = await bcryptjs.hash(
@@ -94,6 +94,16 @@ mesaCtrl.createMesa = async (req, res) => {
 };
 
 mesaCtrl.getMesa = async (req, res) => {
+  // const loginDatos = await mesaModel.find();
+
+  // const datosEncargadoMesa = loginDatos.filter(
+  //   (res) => res.cuEncargadoMesa === req.params.id
+  // );
+
+  // const datosVerificador = loginDatos.filter(
+  //   (res) => res.cuVerificador === req.params.id
+  // );
+
   const mesas = await mesaModel.find();
 
   // FILTRANDO FRENTES QUE TENGAN LA MISMA FECHA DEL PROCESO ELECTORAL
@@ -114,7 +124,17 @@ mesaCtrl.getMesa = async (req, res) => {
   ]);
   // const nombreCadaFrentePorRegistro = await frenteModel.distinct('nombreFrente', {registro: req.params.id})
 
-  res.json({ registroMesas, nombreCadaMesaPorRegistro });
+  res.json({
+    registroMesas,
+    nombreCadaMesaPorRegistro,
+  });
+
+  // res.json({
+  //   registroMesas,
+  //   nombreCadaMesaPorRegistro,
+  //   datosEncargadoMesa,
+  //   datosVerificador,
+  // });
 };
 
 mesaCtrl.updateMesa = async (req, res) => {

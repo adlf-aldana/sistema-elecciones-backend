@@ -42,6 +42,9 @@ const universitarioSchema = new Schema(
     password: {
       type: String,
     },
+    cargoLogin: {
+      type:String
+    }
   },
   {
     // fecha y hora de creación o edicion de universitario

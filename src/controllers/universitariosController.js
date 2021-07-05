@@ -151,16 +151,35 @@ univerCtrl.getUniversitario = async (req, res) => {
       crypto.enc.Utf8
     ),
   };
+  console.log(universitario);
+
   res.json({ estudiante: universitario });
 };
 
 // ACTUALIZA UN UNIVERSITARIO POR ID
 univerCtrl.updateUniversitario = async (req, res) => {
-  const universitario = await universitarioModel.findByIdAndUpdate(
-    req.params.id,
-    req.body
-  );
-  res.json({ universitario });
+  try {
+    const universitarios = await universitarioModel.find();
+
+    const encargadoMesaVerificador = universitarios.filter(
+      (res) =>
+        crypto.AES.decrypt(res.cu, "palabraClave").toString(crypto.enc.Utf8) ===
+        req.params.id
+    );
+    if (encargadoMesaVerificador) {
+      encargadoMesaVerificador.map(async (res) => {
+        await universitarioModel.findByIdAndUpdate(res._id, req.body);
+      });
+    }
+
+    const universitario = await universitarioModel.findByIdAndUpdate(
+      req.params.id,
+      req.body
+    );
+    res.json({ universitario });
+  } catch (e) {
+    console.log(e);
+  }
 };
 
 // ELIMINA A UN UNIVERSITARIO POR ID

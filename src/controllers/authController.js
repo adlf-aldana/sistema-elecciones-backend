@@ -40,18 +40,36 @@ authCtrl.autenticarUsuario = async (req, res) => {
         universitario[0].cargo,
         "palabraClave"
       ).toString(crypto.enc.Utf8),
+      cargoLogin: universitario[0].cargoLogin,
       password: universitario[0].password,
     };
 
     // BUSCANDO POR MESA
     const mesas = await MesasModels.find();
-    const existeCuMesa = mesas.filter(
-      (mesa) =>
-        crypto.AES.decrypt(mesa.cuEncargado, "palabraClave").toString(
-          crypto.enc.Utf8
-        ) === cu
+    const existeCuEncargadoMesa = mesas.filter(
+      (mesa) => mesa.cuEncargadoMesa === cu
     );
-    if (!existeCuMesa) {
+    const existeVerificador = mesas.filter((mesa) => mesa.cuVerificador === cu);
+
+    if (existeCuEncargadoMesa.length > 1) {
+      console.log("encargado");
+      const passCorrecto = await bcryptjs.compare(
+        password,
+        existeCuEncargadoMesa[0].passwordEncargadoMesa
+      );
+      if (!passCorrecto) {
+        return res.status(400).json({ msg: "Password Incorrecto" });
+      }
+    } else if (existeVerificador.length > 1) {
+      console.log("verificador");
+      const passCorrecto = await bcryptjs.compare(
+        password,
+        existeVerificador[0].passwordVerificador
+      );
+      if (!passCorrecto) {
+        return res.status(400).json({ msg: "Password Incorrecto" });
+      }
+    } else {
       const passCorrecto = await bcryptjs.compare(
         password,
         universitario.password
@@ -60,7 +78,15 @@ authCtrl.autenticarUsuario = async (req, res) => {
         return res.status(400).json({ msg: "Password Incorrecto" });
       }
     }
-    
+
+    // const passCorrecto = await bcryptjs.compare(
+    //   password,
+    //   universitario.password
+    // );
+    // if (!passCorrecto) {
+    //   return res.status(400).json({ msg: "Password Incorrecto" });
+    // }
+
     const payload = {
       usuario: {
         id: universitario.id,
@@ -108,6 +134,7 @@ authCtrl.usuarioAutenticado = async (req, res) => {
       cargo: crypto.AES.decrypt(usuario.cargo, "palabraClave").toString(
         crypto.enc.Utf8
       ),
+      cargoLogin: usuario.cargoLogin,
     };
     res.json({ user });
   } catch (error) {
