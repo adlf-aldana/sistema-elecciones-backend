@@ -161,8 +161,10 @@ mesaCtrl.getMesa = async (req, res) => {
         id: { $push: "$_id" },
         cuEncargadoMesa: { $push: "$cuEncargadoMesa" },
         cargoEncargadoMesa: { $push: "$cargoEncargadoMesa" },
-        cuVerificador: { $push: "$cuVerificador" },
         cargoVerificador: { $push: "$cargoVerificador" },
+        cuVerificador: { $push: "$cuVerificador" },
+        celularEncargadoMesa: { $push: "$celularEncargadoMesa" },
+        celularVerificador: { $push: "$celularVerificador" },
       },
     },
     {

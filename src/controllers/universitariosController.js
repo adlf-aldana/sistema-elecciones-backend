@@ -170,12 +170,10 @@ univerCtrl.updateUniversitario = async (req, res) => {
     // console.log(crypto.AES.decrypt(encargadoMesaVerificador[0].nombre, "palabraClave").toString(crypto.enc.Utf8));
     // console.log(crypto.AES.decrypt(encargadoMesaVerificador[1].nombre, "palabraClave").toString(crypto.enc.Utf8));
     if (encargadoMesaVerificador.length > 0) {
-      console.log("encargado");
       universitario = encargadoMesaVerificador.map(async (res) => {
         await universitarioModel.findByIdAndUpdate(res._id, req.body);
       });
     } else {
-      console.log("no");
       universitario = await universitarioModel.findByIdAndUpdate(
         req.params.id,
         req.body

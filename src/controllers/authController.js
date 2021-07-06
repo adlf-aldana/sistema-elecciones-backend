@@ -44,7 +44,6 @@ authCtrl.autenticarUsuario = async (req, res) => {
       password: universitario[0].password,
     };
 
-    console.log(universitario);
     // BUSCANDO POR MESA
     const mesas = await MesasModels.find();
     const existeCuEncargadoMesa = mesas.filter(
@@ -71,7 +70,6 @@ authCtrl.autenticarUsuario = async (req, res) => {
         return res.status(400).json({ msg: "Password Incorrecto" });
       }
     } else if (universitario.cargo === "Administrador") {
-      console.log("admin universitario");
       const passCorrecto = await bcryptjs.compare(
         password,
         universitario.password
