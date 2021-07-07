@@ -13,6 +13,10 @@ procesoCtrl.getProcesosElectorales = async (req, res) => {
         $group: {
           _id: "$registro",
           id: { $push: "$_id" },
+          nombre: { $push: "$nombre" },
+          apellido: { $push: "$apellido" },
+          ci: { $push: "$ci" },
+          cargo: { $push: "$cargo" },
           estado: { $push: "$estado" },
         },
       },
