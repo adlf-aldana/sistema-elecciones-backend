@@ -26,17 +26,28 @@ frenteCtrl.createFrente = async (req, res) => {
     const universitarios = await universitarioModel.find();
 
     let universitario = [];
-    console.log(req.body);
-    req.body.cuEncargado.map((cu) => {
-      universitario.push(
-        universitarios.filter(
-          (res) =>
-            crypto.AES.decrypt(res.cu, "palabraClave").toString(
-              crypto.enc.Utf8
-            ) === cu
-        )
-      );
-    });
+    // if (req.body.cuEncargado.length > 1) {
+    //   req.body.cuEncargado.map((cu) => {
+    //     console.log("entro");
+    //     universitario.push(
+    //       universitarios.filter(
+    //         (res) =>
+    //           crypto.AES.decrypt(res.cu, "palabraClave").toString(
+    //             crypto.enc.Utf8
+    //           ) === cu
+    //       )
+    //     );
+    //   });
+    // } else {
+    //   universitario.push(
+    //     universitarios.filter(
+    //       (res) =>
+    //         crypto.AES.decrypt(res.cu, "palabraClave").toString(
+    //           crypto.enc.Utf8
+    //         ) === cu
+    //     )
+    //   );
+    // }
 
     // VERIFICANDO QUE LOS CU DE LOS UNIVERSITARIOS EXISTAN, DENTRO DE LOS UNIVERSITARIOS EXISTENTES
     universitario.map(async (u) => {
