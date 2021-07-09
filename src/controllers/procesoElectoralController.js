@@ -64,8 +64,8 @@ procesoCtrl.createProcesoElectoral = async (req, res) => {
 };
 
 procesoCtrl.getProcesoElectoral = async (req, res) => {
-    const mesa = await mesaModel.findById(req.params.id);
-    res.json({ msg: mesa });
+  const mesa = await mesaModel.findById(req.params.id);
+  res.json({ msg: mesa });
 };
 
 procesoCtrl.updateProcesoElectoral = async (req, res) => {
@@ -74,10 +74,14 @@ procesoCtrl.updateProcesoElectoral = async (req, res) => {
       { $group: { _id: "$estado", id: { $push: "$_id" } } },
     ]);
 
-    // cerrando proceso de todos los que estan en ese proceso
-    procesosAbiertos[0].id.map(async (id) => {
-      await procesoElectoralModel.findByIdAndUpdate(id, { estado: false });
-    });
+    for (let i = 0; i < procesosAbiertos.length; i++) {
+      if (procesosAbiertos[i]._id) {
+        procesosAbiertos[i].id.map(async (res) => {
+          console.log(res);
+          await procesoElectoralModel.findByIdAndUpdate(res, { estado: false });
+        });
+      }
+    }
 
     res.send({ msg: "Editado" });
   } catch (e) {
