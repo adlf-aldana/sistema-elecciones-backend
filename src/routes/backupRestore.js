@@ -9,10 +9,4 @@ router.route("/")
   .get(getBackup)
   .post(createBackup);
 
-// router
-//   .route("/:id")
-//   .get(getUniversitario)
-//   .put(updateUniversitario)
-//   .delete(deleteUniversitario);
-
 module.exports = router;

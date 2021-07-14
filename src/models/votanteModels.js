@@ -31,6 +31,9 @@ const votanteSchema = new Schema(
     _idFrente: {
       type: String,
     },
+    numMesa: {
+      type: String,
+    },
   },
   {
     timestamps: true,
