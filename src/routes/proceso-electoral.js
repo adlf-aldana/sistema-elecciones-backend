@@ -8,8 +8,8 @@ const {
   deleteProcesoElectoral,
 } = require("../controllers/procesoElectoralController");
 
-router.route("/").get(getProcesosElectorales).post(createProcesoElectoral);
+router.route("/").get(getProcesosElectorales).post(createProcesoElectoral).delete(deleteProcesoElectoral);
 
-router.route("/:id").get(getProcesoElectoral).put(updateProcesoElectoral).delete(deleteProcesoElectoral);
+router.route("/:id").get(getProcesoElectoral).put(updateProcesoElectoral);
 
 module.exports = router;

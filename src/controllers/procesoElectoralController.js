@@ -1,5 +1,10 @@
 const procesoCtrl = {};
 const procesoElectoralModel = require("../models/procesoElectoralModel");
+const mesaModel = require("../models/mesaModel");
+const universitarioModels = require("../models/universitarioModels");
+const frenteModel = require("../models/frenteModel");
+const votanteModels = require("../models/votanteModels");
+const crypto = require("crypto-js");
 
 procesoCtrl.getProcesosElectorales = async (req, res) => {
   try {
@@ -90,13 +95,33 @@ procesoCtrl.updateProcesoElectoral = async (req, res) => {
 };
 
 procesoCtrl.deleteProcesoElectoral = async (req, res) => {
-  //   try {
-  //     console.log(req.params.id);
-  //     await mesaModel.findByIdAndDelete(req.params.id);
-  //     res.json({ msg: "Mesa Eliminada" });
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
+  // Eliminando la coleccion mesas
+  const mesas = await mesaModel.find();
+  if (mesas.length > 0) mesaModel.collection.drop();
+
+  // Eliminando la coleccion Frentes
+  const frentes = await frenteModel.find();
+  if (frentes.length > 0) frenteModel.collection.drop();
+
+  // Eliminando la coleccion votantes
+  const votantes = await votanteModels.find();
+  if (votantes.length > 0) votanteModels.collection.drop();
+
+  // Eliminando la coleccion procesoElectoral
+  const procesos = await procesoElectoralModel.find();
+  if (procesos.length > 0) procesoElectoralModel.collection.drop();
+
+  // Eliminando a todos los universitarios menos a los administradores
+  const universitarios = await universitarioModels.find();
+  const universitarioNoAdministradores = universitarios.filter(
+    (res) =>
+      crypto.AES.decrypt(res.cargo, "palabraClave").toString(
+        crypto.enc.Utf8
+      ) !== "Administrador"
+  );
+  universitarioNoAdministradores.map(
+    async (res) => await universitarioModels.findByIdAndDelete(res._id)
+  );
 };
 
 module.exports = procesoCtrl;
