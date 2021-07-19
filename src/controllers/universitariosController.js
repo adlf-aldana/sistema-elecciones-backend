@@ -145,6 +145,7 @@ univerCtrl.getUniversitario = async (req, res) => {
       crypto.enc.Utf8
     ),
     registro: universitario[0].registro,
+    email: universitario[0].email,
     carrera: crypto.AES.decrypt(
       universitario[0].carrera,
       "palabraClave"
