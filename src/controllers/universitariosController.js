@@ -48,11 +48,11 @@ univerCtrl.createUniversitario = async (req, res) => {
     let universitario = await universitarios.filter(
       (res) =>
         crypto.AES.decrypt(res.cu, "palabraClave").toString(crypto.enc.Utf8) ===
-        DecryptCu
+        DecryptCu.toString()
     );
     if (
-      universitario.length > 0 &&
-      universitario.registro === req.body.registro
+      universitario.length > 0 
+      // && universitario[0].registro === req.body.registro
     ) {
       return res.status(400).json({ msg: "Error: El universitario ya existe" });
     }
@@ -78,6 +78,7 @@ univerCtrl.createUniversitario = async (req, res) => {
         carrera: req.body.carrera,
         cargo: req.body.cargo,
         registro: req.body.registro,
+        email: req.body.email,
       });
     }
     // Guarda a Universitario

@@ -25,6 +25,9 @@ const universitarioSchema = new Schema(
       trim: true,
       unique: true,
     },
+    email: {
+      type: String
+    },
     carrera: {
       type: String,
       require: true,

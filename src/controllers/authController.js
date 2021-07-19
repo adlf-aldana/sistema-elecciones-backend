@@ -42,6 +42,7 @@ authCtrl.autenticarUsuario = async (req, res) => {
       ).toString(crypto.enc.Utf8),
       cargoLogin: universitario[0].cargoLogin,
       password: universitario[0].password,
+      email: universitario[0].email,
     };
 
     // BUSCANDO POR MESA
@@ -135,6 +136,7 @@ authCtrl.usuarioAutenticado = async (req, res) => {
         crypto.enc.Utf8
       ),
       cargoLogin: usuario.cargoLogin,
+      email: usuario.email,
     };
     res.json({ user });
   } catch (error) {
