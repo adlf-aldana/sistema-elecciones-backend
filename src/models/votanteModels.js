@@ -34,6 +34,9 @@ const votanteSchema = new Schema(
     numMesa: {
       type: String,
     },
+    codigo: {
+      type: Number
+    }
   },
   {
     timestamps: true,
