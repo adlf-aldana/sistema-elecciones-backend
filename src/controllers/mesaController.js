@@ -22,31 +22,12 @@ mesaCtrl.getMesas = async (req, res) => {
         cuVerificador: { $push: "$cuVerificador" },
         celularEncargadoMesa: { $push: "$celularEncargadoMesa" },
         celularVerificador: { $push: "$celularVerificador" },
-        // _id: "$mesa",
-        // id: { $push: "$_id" },
-        // habilitado: { $push: "$habilitado" },
-        // cargo: { $push: "$cargo" },
-        // cuEncargado: { $push: "$cuEncargado" },
-        // celularEncargado: { $push: "$celularEncargado" },
       },
     },
     {
       $sort: { _id: 1 },
     },
   ]);
-
-  // const numMesa = await mesaModel.aggregate([
-  //   {
-  //     $group: {
-  //       _id: "$mesa",
-  //       id: { $push: "$_id" },
-  //       habilitado: { $push: "$habilitado" },
-  //     },
-  //   },
-  //   {
-  //     $sort: { _id: 1 },
-  //   },
-  // ]);
   res.json({ mesas, numMesa });
 };
 
@@ -67,12 +48,12 @@ mesaCtrl.createMesa = async (req, res) => {
       );
     });
 
-    // // VERIFICANDO QUE LOS CU DE LOS UNIVERSITARIOS EXISTAN, DENTRO DE LOS UNIVERSITARIOS EXISTENTES
-    universitario.map(async (u) => {
-      if (u.length < 1) {
+    // VERIFICANDO QUE LOS CU DE LOS UNIVERSITARIOS EXISTAN, DENTRO DE LOS UNIVERSITARIOS EXISTENTES
+    for (let i = 0; i < universitario.length; i++) {
+      if (universitario[i].length < 1) {
         return res.status(400).json({ msg: "Error: Universitario no existe " });
       }
-    });
+    }
 
     const comprobandoCuEncargado = universitarios.filter(
       (res) =>
@@ -200,12 +181,59 @@ mesaCtrl.getMesa = async (req, res) => {
 };
 
 mesaCtrl.updateMesa = async (req, res) => {
-  const mesas = await mesaModel.findByIdAndUpdate(req.params.id, {
-    habilitado: !req.body[0],
-  });
+  try {
+    if (req.params.id === "0") {
+      // ACTUALIZA TODOS LOS DATOS
+      await req.body.map(async (dato) => {
+        const mesas = await mesaModel.findByIdAndUpdate(dato.id, {
+          mesa: dato.mesa,
+          registro: dato.registro,
+          cargo: dato.cargo,
+          cuEncargado: crypto.AES.encrypt(
+            dato.cuEncargado,
+            "palabraClave"
+          ).toString(),
+          celularEncargado: crypto.AES.encrypt(
+            dato.celularEncargado,
+            "palabraClave"
+          ).toString(),
+          habilitado: dato.habilitado,
 
-  // const nombreCadaMesaPorRegistro = await mesaModel.aggregate([
-  //   { $match: { registro: req.params.id } },
+          cargoEncargadoMesa: dato.cargoEncargadoMesa,
+          cuEncargadoMesa: dato.cuEncargadoMesa,
+          celularEncargadoMesa: dato.celularEncargadoMesa,
+          passwordEncargadoMesa: dato.passwordEncargadoMesa,
+          cargoVerificador: dato.cargoVerificador,
+          cuVerificador: dato.cuVerificador,
+          celularVerificador: dato.celularVerificador,
+        });
+      });
+    } else {
+      //SOLO ACTUALIZA SI HABILITA O DESHABILITA LA MESA
+      const mesas = await mesaModel.findByIdAndUpdate(req.params.id, {
+        habilitado: !req.body[0],
+      });
+    }
+    res.json({ msg: "Editado correctamten" });
+  } catch (error) {
+    console.log(error);
+    res.json({ msg: "Error: Se produjo un error al actualizar los datos" });
+  }
+
+  // // const nombreCadaMesaPorRegistro = await mesaModel.aggregate([
+  // //   { $match: { registro: req.params.id } },
+  // //   {
+  // //     $group: {
+  // //       _id: "$mesa",
+  // //       cargo: { $push: "$cargo" },
+  // //       cuEncargado: { $push: "$cuEncargado" },
+  // //       celularEncargado: { $push: "$celularEncargado" },
+  // //       habilitado: { $push: "$habilitado" },
+  // //       id: { $push: "$_id" },
+  // //     },
+  // //   },
+  // // ]);
+  // const numMesa = await mesaModel.aggregate([
   //   {
   //     $group: {
   //       _id: "$mesa",
@@ -214,38 +242,26 @@ mesaCtrl.updateMesa = async (req, res) => {
   //       celularEncargado: { $push: "$celularEncargado" },
   //       habilitado: { $push: "$habilitado" },
   //       id: { $push: "$_id" },
+  //       cuEncargadoMesa: { $push: "$cuEncargadoMesa" },
+  //       cargoEncargadoMesa: { $push: "$cargoEncargadoMesa" },
+  //       cargoVerificador: { $push: "$cargoVerificador" },
+  //       cuVerificador: { $push: "$cuVerificador" },
+  //       celularEncargadoMesa: { $push: "$celularEncargadoMesa" },
+  //       celularVerificador: { $push: "$celularVerificador" },
+
+  //       // id: { $push: "$_id" },
+  //       // habilitado: { $push: "$habilitado" },
+  //       // cargo: { $push: "$cargo" },
+  //       // cuEncargado: { $push: "$cuEncargado" },
+  //       // celularEncargado: { $push: "$celularEncargado" },
   //     },
   //   },
+  //   {
+  //     $sort: { _id: 1 },
+  //   },
   // ]);
-  const numMesa = await mesaModel.aggregate([
-    {
-      $group: {
-        _id: "$mesa",
-        cargo: { $push: "$cargo" },
-        cuEncargado: { $push: "$cuEncargado" },
-        celularEncargado: { $push: "$celularEncargado" },
-        habilitado: { $push: "$habilitado" },
-        id: { $push: "$_id" },
-        cuEncargadoMesa: { $push: "$cuEncargadoMesa" },
-        cargoEncargadoMesa: { $push: "$cargoEncargadoMesa" },
-        cargoVerificador: { $push: "$cargoVerificador" },
-        cuVerificador: { $push: "$cuVerificador" },
-        celularEncargadoMesa: { $push: "$celularEncargadoMesa" },
-        celularVerificador: { $push: "$celularVerificador" },
 
-        // id: { $push: "$_id" },
-        // habilitado: { $push: "$habilitado" },
-        // cargo: { $push: "$cargo" },
-        // cuEncargado: { $push: "$cuEncargado" },
-        // celularEncargado: { $push: "$celularEncargado" },
-      },
-    },
-    {
-      $sort: { _id: 1 },
-    },
-  ]);
-
-  res.json({ mesas, numMesa });
+  // res.json({ mesas, numMesa });
 };
 
 mesaCtrl.deleteMesa = async (req, res) => {
