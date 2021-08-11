@@ -1,10 +1,10 @@
 const votanteCtrl = {};
 const votanteModels = require("../models/votanteModels");
 
-const Web3 = require("web3");
-const TruffleContract = require("truffle-contract");
-// const JSONvotacion = require("../../../build2/contracts/votacion");
-const JSONvotacion = require("../../../sistema_elecciones/build2/contracts/votacion.json");
+// const Web3 = require("web3");
+// const TruffleContract = require("truffle-contract");
+// // const JSONvotacion = require("../../../build2/contracts/votacion");
+// const JSONvotacion = require("../../../sistema_elecciones/build2/contracts/votacion.json");
 
 Web3.providers.HttpProvider.prototype.sendAsync =
   Web3.providers.HttpProvider.prototype.send;
@@ -100,17 +100,17 @@ votanteCtrl.getUltimoVotante = async (req, res) => {
 };
 
 votanteCtrl.updateVotante = async (req, res) => {
-  if (req.body._idFrente) {
-    const truffle = TruffleContract(JSONvotacion);
-    truffle.setProvider(web3Provider);
-    const votacion = await truffle.deployed();
-    const accounts = await web3.eth.getAccounts();
-    const account = accounts[0];
-    await votacion.createTask(req.body.cu, req.body._idFrente, "20/02/2020", {
-      from: account,
-      gas: 3000000,
-    });
-  }
+  // if (req.body._idFrente) {
+  //   const truffle = TruffleContract(JSONvotacion);
+  //   truffle.setProvider(web3Provider);
+  //   const votacion = await truffle.deployed();
+  //   const accounts = await web3.eth.getAccounts();
+  //   const account = accounts[0];
+  //   await votacion.createTask(req.body.cu, req.body._idFrente, "20/02/2020", {
+  //     from: account,
+  //     gas: 3000000,
+  //   });
+  // }
   try {
     const votante = await votanteModels.findByIdAndUpdate(
       req.params.id,
