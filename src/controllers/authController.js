@@ -67,10 +67,20 @@ authCtrl.autenticarUsuario = async (req, res) => {
         password,
         existeVerificador[0].passwordVerificador
       );
+
       if (!passCorrecto) {
         return res.status(400).json({ msg: "Password Incorrecto" });
       }
     } else if (universitario.cargo === "Administrador") {
+      console.log("admin");
+      const passCorrecto = await bcryptjs.compare(
+        password,
+        universitario.password
+      );
+      if (!passCorrecto) {
+        return res.status(400).json({ msg: "Password Incorrecto" });
+      }
+    } else {
       const passCorrecto = await bcryptjs.compare(
         password,
         universitario.password
@@ -79,14 +89,6 @@ authCtrl.autenticarUsuario = async (req, res) => {
         return res.status(400).json({ msg: "Password Incorrecto" });
       }
     }
-
-    // const passCorrecto = await bcryptjs.compare(
-    //   password,
-    //   universitario.password
-    // );
-    // if (!passCorrecto) {
-    //   return res.status(400).json({ msg: "Password Incorrecto" });
-    // }
 
     const payload = {
       usuario: {

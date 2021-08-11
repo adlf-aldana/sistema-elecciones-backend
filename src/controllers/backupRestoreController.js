@@ -13,7 +13,7 @@ var loginId = path.join(userName);
 // const ARCHIVE_PATH = path.join('C:/Users/'+loginId+'/Desktop/dump/');
 const ARCHIVE_PATH = path.join('C:/Users/'+loginId+'/Desktop/', `${DB_NAME}.gzip`);
 
-const ARCHIVE_PATH2 = path.join('C:/Users/'+loginId+'/Desktop/');
+const ARCHIVE_PATH2 = path.join('C:/Users/'+loginId+'/Desktop/dumb');
 
 // Restaurar Backup
 backupRestoreCtrl.getBackup = async (req, res) => {

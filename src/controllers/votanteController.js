@@ -1,13 +1,15 @@
 const votanteCtrl = {};
 const votanteModels = require("../models/votanteModels");
 
-// const Web3 = require("web3");
-// const TruffleContract = require("truffle-contract");
+const Web3 = require("web3");
+const TruffleContract = require("truffle-contract");
 // const JSONvotacion = require("../../../build2/contracts/votacion");
-// Web3.providers.HttpProvider.prototype.sendAsync =
-//   Web3.providers.HttpProvider.prototype.send;
-// const web3Provider = new Web3.providers.HttpProvider("http://127.0.0.1:8545");
-// const web3 = new Web3(Web3.givenProvider || "http://127.0.0.1:8545");
+const JSONvotacion = require("../../../sistema_elecciones/build2/contracts/votacion.json");
+
+Web3.providers.HttpProvider.prototype.sendAsync =
+  Web3.providers.HttpProvider.prototype.send;
+const web3Provider = new Web3.providers.HttpProvider("http://127.0.0.1:8545");
+const web3 = new Web3(Web3.givenProvider || "http://127.0.0.1:8545");
 
 // OBTIENE A LOS VOTANTES
 votanteCtrl.getVotantes = async (req, res) => {
@@ -98,18 +100,18 @@ votanteCtrl.getUltimoVotante = async (req, res) => {
 };
 
 votanteCtrl.updateVotante = async (req, res) => {
+  if (req.body._idFrente) {
+    const truffle = TruffleContract(JSONvotacion);
+    truffle.setProvider(web3Provider);
+    const votacion = await truffle.deployed();
+    const accounts = await web3.eth.getAccounts();
+    const account = accounts[0];
+    await votacion.createTask(req.body.cu, req.body._idFrente, "20/02/2020", {
+      from: account,
+      gas: 3000000,
+    });
+  }
   try {
-    // if (req.body._idFrente) {
-    //   const truffle = TruffleContract(JSONvotacion);
-    //   truffle.setProvider(web3Provider);
-    //   const votacion = await truffle.deployed();
-    //   const accounts = await web3.eth.getAccounts();
-    //   const account = accounts[0];
-    //   await votacion.createTask(req.body.cu, req.body._idFrente, "20/02/2020", {
-    //     from: account,
-    //     gas: 3000000,
-    //   });
-    // }
     const votante = await votanteModels.findByIdAndUpdate(
       req.params.id,
       req.body

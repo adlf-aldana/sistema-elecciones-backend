@@ -24,6 +24,6 @@ app.use("/api/consultaVotante", require("./routes/consultasVotante"));
 app.use("/api/mesas", require("./routes/mesas"));
 app.use("/api/procesoElectoral", require("./routes/proceso-electoral"));
 
-// app.use("/api/backupRestore", require("./routes/backupRestore"));
+app.use("/api/backupRestore", require("./routes/backupRestore"));
 
 module.exports = app;
