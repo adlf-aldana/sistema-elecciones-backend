@@ -26,6 +26,7 @@ frenteCtrl.createFrente = async (req, res) => {
     const universitarios = await universitarioModel.find();
 
     let universitario = [];
+    console.log(req.body.cuEncargado);
     if (req.body.cuEncargado.length > 1) {
       req.body.cuEncargado.map((cu) => {
         universitario.push(

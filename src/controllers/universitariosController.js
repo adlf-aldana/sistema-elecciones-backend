@@ -50,18 +50,14 @@ univerCtrl.createUniversitario = async (req, res) => {
         crypto.AES.decrypt(res.cu, "palabraClave").toString(crypto.enc.Utf8) ===
         DecryptCu.toString()
     );
+    // console.log(universitario[0].length);
     if (
-      universitario.length > 0 
+      universitario.length > 0
       // && universitario[0].registro === req.body.registro
     ) {
       return res.status(400).json({ msg: "Error: El universitario ya existe" });
     }
 
-    //   // hashear el password
-    // const salt = await bcryptjs.genSalt(10);
-    // req.body.password = await bcryptjs.hash(password, salt);
-    // // Crea universitario
-    // universitario = new universitarioModel(req.body);
     if (password) {
       // hashear el password
       const salt = await bcryptjs.genSalt(10);
