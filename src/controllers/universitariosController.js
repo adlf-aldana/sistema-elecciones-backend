@@ -164,9 +164,16 @@ univerCtrl.updateUniversitario = async (req, res) => {
         req.params.id
     );
 
-    // console.log(encargadoMesaVerificador[0].nombre);
-    // console.log(crypto.AES.decrypt(encargadoMesaVerificador[0].nombre, "palabraClave").toString(crypto.enc.Utf8));
-    // console.log(crypto.AES.decrypt(encargadoMesaVerificador[1].nombre, "palabraClave").toString(crypto.enc.Utf8));
+    const { password } = req.body;
+
+    if (password) {
+      // hashear el password
+      const salt = await bcryptjs.genSalt(10);
+      req.body.password = await bcryptjs.hash(password, salt);
+      // Crea universitario
+      universitario = new universitarioModel(req.body);
+    }
+
     if (encargadoMesaVerificador.length > 0) {
       universitario = encargadoMesaVerificador.map(async (res) => {
         await universitarioModel.findByIdAndUpdate(res._id, req.body);
